@@ -1,8 +1,10 @@
+import math
+
 import numpy as np
 
 
 def is_table_positive(table):
-    print("table : ", table)
+    print("Cout réduits  : ", table)
     for element in table:
         if element > 0:
             return 1
@@ -19,7 +21,6 @@ def max_simplex(cout_z, constraint, b):
     #calculons les nouveaux couts réduits en fonction de M
     for k in range(len(cout_z)):
         for j in range(nb_constraint):
-            print("lwl ",k," k ",constraint[j][k])
             cout_z[k] += M*constraint[j][k]
 
 
@@ -27,15 +28,13 @@ def max_simplex(cout_z, constraint, b):
     couts_initial += [0 for i in range(nb_constraint)]  # initialisation des couts réduits
     bi = b
     z_res = 0
-    print("couts réduit  : ", couts_reduits)
 
     # initialisation de la grande matrice
     grande_matrice = constraint
     for i in range(nb_constraint):
         grande_matrice[i] += base_depart[i]
     grande_matrice += [couts_reduits]
-    print(grande_matrice)
-    print(len(grande_matrice), 'and', grande_matrice[3][6])
+    print("Tableau début :", grande_matrice)
 
     # starting the simplex iteration
 
@@ -80,7 +79,6 @@ def max_simplex(cout_z, constraint, b):
             grande_matrice[sortant_index][i] = grande_matrice[sortant_index][i] / pivot
 
         new_bi = [bi[i] for i in range(len(bi))]
-        print('new len grand j ', grande_matrice[0])
         for i in range(nb_line):
             if i == sortant_index:
                 bi[i] = bi[i] / pivot
@@ -90,14 +88,22 @@ def max_simplex(cout_z, constraint, b):
                 if j != entrant_index and i != sortant_index:
                     grande_matrice[i][j] = ((copy[i][j] * pivot) - (
                                 copy[sortant_index][j] * copy[i][entrant_index])) / pivot
+        print('Bi : ', bi)
 
         print("base variable : ",base_variable)
         z_res = 0
         for i in range(len(base_variable)):
             z_res += bi[i]*couts_initial[base_variable[i]]
 
-
-    return "resuu", grande_matrice, "bi", bi, "z", z_res
+        # affichr matrice res:
+    print('Tableau final : ')
+    for i in range(nb_line):
+        print('[', end=''),
+        for j in range(nb_column):
+            print(math.floor(grande_matrice[i][j]), end=' ')
+        print(']')
+    print('Z résultat : ', z_res)
+    return "END"
 
 
 # Print(max_simplex([-15, -14], [[9, 7], [1, 1]], [100, 12]))
